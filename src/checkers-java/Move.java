@@ -59,20 +59,20 @@ public class Move {
 		}else{
 	    String delimiter = "-";
 	    String[] points = input.split(delimiter);
-	    for (int i = 0; i<points.length;++i)
-	    {
-	        String point = points[i];
-	        String result = new String();
-	        for (int j = 1; j<point.length()-1;++j)
-	        {
-	            result = result + point.charAt(j);
-	        }
-	        String[] xy = result.split(",");
-	        int x = Integer.parseInt(xy[0]);
-	        int y = Integer.parseInt(xy[1]);
-	        Position to_add = new Position(x,y);
-	        seq.addElement(to_add);
-	    }
+		    for (int i = 0; i<points.length;++i)
+		    {
+		        String point = points[i];
+		        String result = new String();
+		        for (int j = 1; j<point.length()-1;++j)
+		        {
+		            result = result + point.charAt(j);
+		        }
+		        String[] xy = result.split(",");
+		        int x = Integer.parseInt(xy[0]);
+		        int y = Integer.parseInt(xy[1]);
+		        Position to_add = new Position(x,y);
+		        seq.addElement(to_add);
+		    }
 		}
 	}
 

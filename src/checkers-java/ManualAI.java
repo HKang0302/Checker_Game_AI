@@ -7,6 +7,7 @@ We are following the javadoc docstring format which is:
 @throws Tag Describes the errors this function can raise
  */
 
+import java.util.Random;
 import java.util.Scanner;
 import java.util.Vector;
 
@@ -42,23 +43,33 @@ public class ManualAI extends AI {
         else
             player = 1;
         Vector<Vector<Move>> moves = board.getAllPossibleMoves(player);
-        for (int i = 0; i < moves.size(); ++i) {
-            System.out.print(i + ": [");
-            for (int j = 0; j < moves.get(i).size(); ++j) {
-                System.out.print(((j != 0) ? ", " : "") + j + ": " + moves.get(i).get(j).toString());
-            }
-            System.out.println("]");
-        }
-        System.out.print("Waiting for input {int} {int}: ");
-        Scanner scanner = new Scanner(System.in);
-        int n = -1,
-            m = -1;
-        do {
-            n = scanner.nextInt();
-            m = scanner.nextInt();
-            if ((n < 0 || n >= moves.size()) || (m < 0 || m >= moves.get(n).size()))
-                System.out.print("Invalid move\nWaiting for input {int} {int}: ");
-        } while ((n < 0 || n >= moves.size()) || (m < 0 || m >= moves.get(n).size()));
+        
+        /*********************** FOR DEBUGGING **********************/
+        
+        int n,m;
+        Random randGen = new Random();
+	    n = randGen.nextInt(moves.size());
+	    m = randGen.nextInt(moves.get(n).size());
+	    
+	    /*************************************************************/
+
+//        for (int i = 0; i < moves.size(); ++i) {
+//            System.out.print(i + ": [");
+//            for (int j = 0; j < moves.get(i).size(); ++j) {
+//                System.out.print(((j != 0) ? ", " : "") + j + ": " + moves.get(i).get(j).toString());
+//            }
+//            System.out.println("]");
+//        }
+//        System.out.print("Waiting for input {int} {int}: ");
+//        Scanner scanner = new Scanner(System.in);
+//        int n = -1,
+//            m = -1;
+//        do {
+//            n = scanner.nextInt();
+//            m = scanner.nextInt();
+//            if ((n < 0 || n >= moves.size()) || (m < 0 || m >= moves.get(n).size()))
+//                System.out.print("Invalid move\nWaiting for input {int} {int}: ");
+//        } while ((n < 0 || n >= moves.size()) || (m < 0 || m >= moves.get(n).size()));
         Move resMove = moves.get(n).get(m);
         board.makeMove(resMove, player);
         return resMove;
