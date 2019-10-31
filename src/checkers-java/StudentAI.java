@@ -19,8 +19,6 @@ public class StudentAI extends AI {
         else // for the first time player
         	player = 1;
         
-//        int[] disks = countBW();
-        
 /***********************		DELETE THIS IN THE FINAL VERSION	***********************************/        
 
 ////        System.out.println("Count, B: " + bCount + "  W:" + wCount);
@@ -68,7 +66,6 @@ public class StudentAI extends AI {
 //        
 //      Move based on the decision
 	    Move resMove = moves.get(index).get(innerIndex);
-	    System.out.println("HI");
         board.makeMove(resMove, player);
         return resMove;
     }
@@ -79,7 +76,7 @@ public class StudentAI extends AI {
     	int bestIndex = 0, bestInnerIndex = 0;
     	int score=0;
     	
-    	if(depth==3 || nextMoves.isEmpty())
+    	if(depth==4 || nextMoves.isEmpty())
     	{
     		// evaluate score
     		score = evaluate(turn);
@@ -136,8 +133,6 @@ public class StudentAI extends AI {
     	int[] disks = countBW();
     	int bCount = disks[0];
     	int wCount = disks[1];
-    	
-//    	System.out.println("Player: "+player + " TURN: " + turn +" B: "+bCount +" W: "+wCount);
     	
     	if(turn==player)
     	{
