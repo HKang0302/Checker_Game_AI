@@ -40,7 +40,7 @@ public class StudentAI extends AI {
         int turn = player;
  
         int[] result = minimax(turn, 0);
-
+		//right now the move being returned is sometimes a backwards move for a non-king piece
         int index, innerIndex;
     	index = result[0];
     	innerIndex = result[1];
@@ -149,69 +149,114 @@ public class StudentAI extends AI {
         }
     	return new int[] {bCount, bKingCount, wCount, wKingCount};
     }
+
+	//return whether or not the piece is in the back row. 
+	//use this in order to avoid moving pieces in the back row
+	private boolean backRow(int r, int max, String c)
+	{
+		if(c == "W") return (r == max);
+		if(c == "B") return (r == 0);
+		return false;
+	}
+
+	//returns the dimensions of the center of the board
+	//if the move is going to land you in the center of the board the move gets a higher score
+	private int[] center()
+	{
+		int startRow = (this.board.row / 2) - 1;
+		int startCol = (this.board.col / 2) - 1;
+		return new int[] {startRow, startCol, 2 * startRow, 2 * startCol};
+	}
+
+	//return the number of enemy pieces in the area
+	//where i = row and j = col of the square where the checker will move to 
+	//use this to see if there are a lot of enemy pieces in the area of the move
+	private int checkArea(int i , int j, int turn)
+	{
+		int total = 0;
+		int rowStart = 0; int rowEnd = this.board.row - 1 ; int colStart = 0; int colEnd = this.board.col - 1;
+		
+		if(turn == 1){
+			//check the number of black pieces in the move area?
+			return total;
+		}	
+		//check the total number of white pieces in the area?
+		return total;
+	}
+
+	private int mahejaEval(int turn){
+		//index 0 = pawns
+		//index 1 = kings
+		//index 2 = back row
+		//index 3 = center of the board
+		//index 4 = number of pieces that can be taken
+		int[] whiteCount = new int[5];
+		int[] blackCount = new int[5];
+
+		//get the number of kings and pawns 
+		int[] pawnsAndKings = countBW();
+		whiteCount[0] = pawnsAndKings[2];
+		whiteCount[1] = pawnsAndKings[3];
+		blackCount[0] = pawnsAndKings[0];
+		blackCount[1] = pawnsAndKings[1];
 	
-	 //return whether or not the piece is in the back row.
-    //use this in order to avoid moving pieces in the back row
-    private boolean backRow(int r, int max, String c)
-    {
-        if(c == "W") return (r == max);
-        if(c == "B") return (r == 0);
-        return false;
-    }
+		int[] dimensions = center();
 
-    //returns the dimensions of the center of the board
-    //if the move is going to land you in the center of the board the move gets a higher score
-    private int[] center()
-    {
-        int startRow = (this.board.row / 2) - 1;
-        int startCol = (this.board.col / 2) - 1;
-        return new int[] {startRow, startCol, 2 * startRow, 2 * startCol};
-    }
-	
-    private int mahejaEval(int turn){
-    	//index 0 = pawns
-        //index 1 = kings
-        //index 2 = back row
-        //index 3 = center of the board
-        int[] whiteCount = new int[4];
-        int[] blackCount = new int[4];
+		for(int i = 0; i < this.board.row; i++){
+			for(int j = 0; j < this.board.col; j++){
+				//System.out.println("["+i+","+j+"]");
+				Checker checker = this.board.board.get(i).get(j);
+				String color = checker.color;
+				if(color == "B"){
+					//check if piece is in the back row
+					if(backRow(i, this.board.row - 1, color)) blackCount[2]++;
+					//check if piece is in the middle of the board
+					if(i >= dimensions[0] && i <= dimensions[2])
+						if(j >= dimensions[1] && j <= dimensions[3]) blackCount[3]++;  
+					//check the number of pieces that can be taken
+					/*if(i >0){
+						if(j > 0 && j < this.board.col){
+						
+							System.out.println((i+1)+" "+(i-1)+"\n"+(j+1)+" "+(j-1));
 
-        //get the number of kings and pawns
-        int[] pawnsAndKings = countBW();
-        whiteCount[0] = pawnsAndKings[2];
-        whiteCount[1] = pawnsAndKings[3];
-        blackCount[0] = pawnsAndKings[0];
-        blackCount[1] = pawnsAndKings[1];
+							Checker lowerleft = this.board.board.get(i-1).get(j-1);
+							Checker upperright = this.board.board.get(i+1).get(j+1);
+							if(lowerleft != null && lowerleft.color == "W" && upperright == null)  blackCount[4]++;
+							Checker lowerright = this.board.board.get(i-1).get(j+1);
+							Checker upperleft = this.board.board.get(i+1).get(j-1);
+							if(lowerright != null && lowerright.color == "W" && upperleft == null) blackCount[4]++;
+						}
+					}*/	
+				}
+				if(color == "W"){
+					if(backRow(i, this.board.row -1, color)) whiteCount[2]++;
+					if(i >= dimensions[0] && i <= dimensions[2])
+						if(j >= dimensions[1] && j <= dimensions[3]) whiteCount[4]++;
+					/*if(i < this.board.row - 1){
+						if(j > 0 && j < this.board.col){
 
-        int[] dimensions = center();
+							System.out.println((i+1)+" "+(i-1)+"\n"+(j+1)+" "+(j-1));
 
-        for(int i = 0; i < this.board.row; i++){
-            for(int j = 0; j < this.board.col; j++){
-                //System.out.println("["+i+","+j+"]");
-                Checker checker = this.board.board.get(i).get(j);
-                String color = checker.color;
-                if(color == "B"){
-                	//check if piece is in the back row
-                    	if(backRow(i, this.board.row - 1, color)) blackCount[2]++;
-                    	//check if piece is in the middle of the board
-                    	if(i >= dimensions[0] && i <= dimensions[2])
-                        	if(j >= dimensions[1] && j <= dimensions[3]) blackCount[3]++;		
+                        	Checker lowerleft = this.board.board.get(i-1).get(j-1);
+							Checker upperright = this.board.board.get(i+1).get(j+1);
+                        	if(upperright != null && upperright.color == "B" && lowerleft == null)  whiteCount[4]++;
+                        	Checker lowerright = this.board.board.get(i-1).get(j+1);
+                        	Checker upperleft = this.board.board.get(i+1).get(j-1);
+                        	if(upperleft != null && upperleft.color == "B" && lowerright == null) whiteCount[4]++;
+                    	}
+					}*/
+				}
+			}
 		}
-		if(color == "W"){
-                	if(backRow(i, this.board.row -1, color)) whiteCount[2]++;
-                    	if(i >= dimensions[0] && i <= dimensions[2])
-                        	if(j >= dimensions[1] && j <= dimensions[3]) whiteCount[4]++;
- 		}
-            }
-        }
+		
+		int sumBlack = 0; int sumWhite = 0;
+		for(int i = 0; i < blackCount.length; i++){
+			sumBlack += blackCount[i];
+			sumWhite += whiteCount[i];
+		}
+		
+		if(turn == 1) return sumBlack - sumWhite;
+		return sumWhite - sumBlack;
+	}
 
-        int sumBlack = 0; int sumWhite = 0;
-        for(int i = 0; i < blackCount.length; i++){
-            sumBlack += blackCount[i];
-            sumWhite += whiteCount[i];
-        }
-
-        if(turn == 1) return sumBlack - sumWhite;
-        return sumWhite - sumBlack;
-    }
 }
